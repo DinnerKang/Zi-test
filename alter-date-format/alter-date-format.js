@@ -1,9 +1,18 @@
 
 
-timeIncrease('AM 05:24:03', 102392)
+expect(timeIncrease('PM 01:00:00', 10)).toBe('13:00:10');
+expect(timeIncrease('PM 11:59:59', 1)).toBe('00:00:00');
+expect(timeIncrease('AM 12:10:00', 40)).toBe('00:10:40');
+expect(timeIncrease('AM 05:24:03', 102392)).toBe('09:50:35');
+
+
+expect(timeIncrease('AM 05:00:00', 72000)).toBe('01:00:00');
+expect(timeIncrease('AM 05:00:00', 108000)).toBe('11:00:00');
+expect(timeIncrease('AM 11:00:00', 90000)).toBe('12:00:00');
+expect(timeIncrease('PM 11:00:00', 90000)).toBe('00:00:00');
 
 function timeIncrease(nowDate, n){
-    console.log(nowDate);
+    console.log('들어온 시간 :',nowDate);
     let result;
     const day = nowDate.slice(0,2);
     const time = nowDate.substr(3).split(':');
@@ -30,6 +39,18 @@ function timeIncrease(nowDate, n){
     if (seconds < 10) seconds = '0' + seconds;
 
     result = hours + ':' + minutes + ':' +seconds;
-    console.log(result);
     return result;
+}
+
+
+function expect(result) {
+    return{
+        toBe : function(expected){
+            if( result != expected ){
+                throw new Error(`결과값 : ${result} 예상값 : ${expected}`);
+            }else{
+                console.log(`테스트 성공 : ${expected}`);
+            }
+        }
+    }
 }
