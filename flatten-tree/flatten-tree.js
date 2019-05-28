@@ -1,13 +1,11 @@
 
 
 
-// 테스트 시 데이터 경로 추가
-//getData('./categories.json');
-
 expect(getData('./categories.json'), 130);
+expect(getData('./test-no-oneNode.json'), 129);
+expect(getData('./test1.json'), 126);
 
 // 테스트 함수
-// 
 async function expect(result, expected) {
     const res = await result;
     if( res.length != expected ){
