@@ -93,6 +93,7 @@ class App extends Component {
                 variables : { supplier, name, price }
             });
             alert(`${name} 상품이 추가되었습니다.`);
+            await this.getProductList();
         }catch(e){
             console.log(e);
             alert('상품 추가가 실패했습니다.');
@@ -131,7 +132,28 @@ class App extends Component {
                             <input type="button" value="상품 추가" onClick={this.addProduct}/>
                         </article>
                         <article>
-
+                            {this.state.productList.map(
+                                (c) =>
+                                    <div key={c.id} className="product_list_container">
+                                        <ul >
+                                            <li className="product_list">
+                                                상품 ID : {c.id}
+                                            </li>
+                                            <li className="product_list">
+                                                상품 이름(한) : {c.name_ko}
+                                            </li>
+                                            <li className="product_list">
+                                                상품 이름(영) : {c.name_en}
+                                            </li>
+                                            <li className="product_list">
+                                                상품 가격 : {c.price}
+                                            </li>
+                                            <li className="product_list">
+                                                상품 공급사 :{c.supplier.name}
+                                            </li>
+                                        </ul>
+                                    </div>
+                            )}
                         </article>
                     </div>
                 </section>
