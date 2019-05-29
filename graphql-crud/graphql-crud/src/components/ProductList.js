@@ -12,7 +12,7 @@ const endPoint = axios.create({
 });
 
 
-class App extends Component {
+class ProductList extends Component {
 
     constructor(props){
         super(props);
@@ -110,7 +110,10 @@ class App extends Component {
             selectSupplierId : e.target.value
         })
     }
-
+    productDetail = (id) =>{
+        this.props.passId(id);
+        this.props.history.push('/ProductDetail');
+    }
     render() {
         
         return (
@@ -119,22 +122,25 @@ class App extends Component {
                     <div className="main_container">
                         <article>
                             <h2>상품 추가</h2>
-                            <label className="input_label">제조사
-                            <select onChange={this.selectOption}>
-                                {this.state.supplierList.map(
-                                    (c) => <option value={c.id} key={c.id}>{c.name}</option>
-                                )}
-                            </select></label>
-                            <label className="input_label">이름
-                            <input type="text" name="productName" onChange={this.textChange}/></label>
-                            <label className="input_label">가격
-                            <input type="text" name="productPrice" onChange={this.textChange}/></label>
-                            <input type="button" value="상품 추가" onClick={this.addProduct}/>
+                            <div>
+                                <label className="input_label">제조사
+                                <select onChange={this.selectOption}>
+                                    {this.state.supplierList.map(
+                                        (c) => <option value={c.id} key={c.id}>{c.name}</option>
+                                    )}
+                                </select></label>
+                                <label className="input_label">이름
+                                <input type="text" name="productName" onChange={this.textChange}/></label>
+                                <label className="input_label">가격
+                                <input type="text" name="productPrice" onChange={this.textChange}/></label>
+                                <input type="button" value="상품 추가" onClick={this.addProduct}/>
+                            </div>
+                            
                         </article>
                         <article>
                             {this.state.productList.map(
                                 (c) =>
-                                    <div key={c.id} className="product_list_container">
+                                    <div key={c.id} className="product_list_container" onClick={this.productDetail.bind(this, c.id)}>
                                         <ul >
                                             <li className="product_list">
                                                 상품 ID : {c.id}
@@ -162,4 +168,4 @@ class App extends Component {
     }
 }
 
-export default App;
+export default ProductList;
