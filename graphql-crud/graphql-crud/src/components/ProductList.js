@@ -1,6 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import axios from 'axios';
 
+import './ProductList.css';
 
 const endPoint = axios.create({
     baseURL : 'http://test.recruit.croquis.com:28500/',
@@ -16,42 +17,122 @@ class App extends Component {
     constructor(props){
         super(props);
         this.state={
-            supplierList : []
+            productName : '',
+            productPrice: '',
+            supplierList : [],
+            productList : [],
+            selectSupplierId: null
         }
     }
 
     componentWillMount(){
         this.getSupplierList();
+        this.getProductList();
     }
     
     getSupplierList = async() =>{
-        const query = `
-            {
-                supplier_list {
+        const supplier_list_query = `{
+            supplier_list {
                 item_list {
                     id
                     name
                 }
+            }
+        }`;
+        try{
+            const supplierList = await endPoint.post('',{query : supplier_list_query});
+            this.setState({
+                supplierList : supplierList.data.data.supplier_list.item_list
+            });
+            console.log(this.state.supplierList);
+        }catch(e){
+            console.log(e);
+        }
+    }
+
+    getProductList = async() =>{
+        const product_list_query = `{
+            product_list{
+                item_list{
+                    id
+                    name_ko
+                    name_en
+                    price
+                    supplier{
+                        name
+                    }
                 }
             }
-        `;
-        const supplierList = await endPoint.post('',{query : query});
-        this.setState({
-            supplierList : supplierList.data.data.supplier_list.item_list
-        });
-        console.log(this.state.supplierList);
+        }`;
+        try{
+            const productList = await endPoint.post('',{query : product_list_query});
+            this.setState({
+                productList : productList.data.data.product_list.item_list
+            });
+            console.log(this.state.productList);
+        }catch(e){
+            console.log(e);
+        }
     }
-   
+
+    addProduct = async() =>{
+        // selectBox 선택 없을 경우 supplierList의 첫번째 id 값 부여
+        const supplier = this.state.selectSupplierId ?this.state.selectSupplierId : this.state.supplierList[0].id;
+        const name = this.state.productName;
+        const price = Number(this.state.productPrice);
+        const createProduct_query = `mutation($supplier:ID!, $name:String!, $price: Int!){
+            createProduct(input:{supplier_id:$supplier,name_ko:$name,price:$price}){
+                id
+                name_ko
+                price
+            }
+        }`;
+        try{
+            await endPoint.post('',{
+                query : createProduct_query,
+                variables : { supplier, name, price }
+            });
+            alert(`${name} 상품이 추가되었습니다.`);
+        }catch(e){
+            console.log(e);
+            alert('상품 추가가 실패했습니다.');
+        }
+    }
+
+    textChange = (e) =>{
+        this.setState({
+            [e.target.name] : e.target.value
+        });
+    }
+    selectOption = (e) =>{
+        this.setState({
+            selectSupplierId : e.target.value
+        })
+    }
+
     render() {
+        
         return (
             <Fragment>
                 <section>
-                    <div>
-                        <select>
-                            {this.state.supplierList.map(
-                                (c) => <option value={c.name} key={c.id}>{c.name}</option>
-                            )}
-                        </select>
+                    <div className="main_container">
+                        <article>
+                            <h2>상품 추가</h2>
+                            <label className="input_label">제조사
+                            <select onChange={this.selectOption}>
+                                {this.state.supplierList.map(
+                                    (c) => <option value={c.id} key={c.id}>{c.name}</option>
+                                )}
+                            </select></label>
+                            <label className="input_label">이름
+                            <input type="text" name="productName" onChange={this.textChange}/></label>
+                            <label className="input_label">가격
+                            <input type="text" name="productPrice" onChange={this.textChange}/></label>
+                            <input type="button" value="상품 추가" onClick={this.addProduct}/>
+                        </article>
+                        <article>
+
+                        </article>
                     </div>
                 </section>
             </Fragment>
