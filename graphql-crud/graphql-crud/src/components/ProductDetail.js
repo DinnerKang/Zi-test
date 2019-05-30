@@ -29,13 +29,15 @@ class ProductDetail extends Component {
               },
               date_created: '',
               date_updated: '',
-            }
+            },
+            supplierList: [],
+            updateView: false
         }
         
     }
     
     componentWillMount(){
-        if(!this.props.productId){
+        if(!this.props.productId.length){
             alert('잘못된 접근입니다.');
             return this.props.history.push('/');
         }
@@ -82,8 +84,7 @@ class ProductDetail extends Component {
         const Year = new Date(date).getFullYear();
         const Month = new Date(date).getMonth() +1;
         const Day = new Date(date).getDate();
-        const Hour = new Date(date).getHours();
-        return `${Year}년 ${Month}월 ${Day}일 ${Hour}시`
+        return `${Year}년 ${Month}월 ${Day}일`
       }
     }
 
@@ -109,12 +110,73 @@ class ProductDetail extends Component {
         console.log(e);
         alert('삭제 실패');
       }
-      
     }
 
+    showUpdateView = () =>{
+        this.setState({
+          updateView : !this.state.updateView
+        })
+    }
+
+    // 상품 업데이트
+    updateProduct = async() =>{
+        console.log(this.refs);
+        const id = this.state.productDetail.id;
+        const name_ko = this.refs.name_ko.value;
+        const name_en = this.refs.name_en.value;
+        const description_ko = this.refs.description_ko.value;
+        const description_en = this.refs.description_en.value;
+        const price = Number(this.refs.price.value);
+
+        const updateProduct_query =`
+              mutation($id:ID!, $name_ko:String!, $name_en:String!, $description_ko:String!, $description_en:String!, $price:Int!){
+                updateProduct(input:{id:$id, name_ko:$name_ko, name_en:$name_en, description_ko:$description_ko, description_en:$description_en, price:$price}){
+                  id
+                  name_ko
+                  name_en
+                }
+              }`;
+
+        try{
+          await endPoint.post('',{
+            query : updateProduct_query,
+            variables : { id, name_ko, name_en, description_ko, description_en, price }
+          });
+          alert('수정 완료');
+          this.setState({
+            updateView : false
+          })
+          this.getProdcutDetail();
+        }catch(e){ 
+          console.log(e);
+        }
+
+    }
+
+    // 상품 공급사 호출 -> ToDo : 리팩토링으로 중복 제거 하기
+    getSupplierList = async() =>{
+      const supplier_list_query = `{
+          supplier_list {
+              item_list {
+                  id
+                  name
+              }
+          }
+      }`;
+      try{
+          const supplierList = await endPoint.post('',{query : supplier_list_query});
+          this.setState({
+              supplierList : supplierList.data.data.supplier_list.item_list
+          });
+          console.log(this.state.supplierList);
+      }catch(e){
+          console.log(e);
+      }
+  }
   render() {
-    return (
-      <Fragment>
+    if(!this.state.updateView){
+      return(
+        <Fragment>
           <section>
             <article  className="detail_container">
               <div  className="detail_area">
@@ -148,14 +210,56 @@ class ProductDetail extends Component {
                   </li>
                 </ul>
                 <div className="btn_area">
-                  <input type="button"  className="btn" value="수정" />
+                  <input type="button"  className="btn" value="수정" onClick={this.showUpdateView}/>
                   <input type="button" className="btn" value="삭제" onClick={this.deleteProduct}/>
                 </div>
               </div>
             </article>
           </section>
-      </Fragment>
-    );
+        </Fragment>
+      );
+    }else{
+      return (
+        <Fragment>
+            <section>
+              <article  className="detail_container">
+                <div  className="detail_area">
+                  <ul>
+                    <li>
+                      상품 ID : {this.state.productDetail.id}
+                    </li>
+                    <li>
+                      상품 이름(한) : <input type="text" ref="name_ko" defaultValue={this.state.productDetail.name_ko}/>
+                    </li>
+                    <li>
+                      상품 이름(영) : <input type="text" ref="name_en" 
+                                            defaultValue={this.state.productDetail.name_en ? this.state.productDetail.name_en : '미입력'}/>
+                    </li>
+                    <li>
+                      상품 설명(한) : <input type="text" ref="description_ko" 
+                                            defaultValue={this.state.productDetail.description_ko ? this.state.productDetail.description_ko  : '미입력'}/>
+                    </li>
+                    <li>
+                      상품 설명(영) : <input type="text" ref="description_en" 
+                                            defaultValue={this.state.productDetail.description_en ? this.state.productDetail.description_en : '미입력'}/>
+                    </li>
+                    <li>
+                      상품 가격 : <input type="text" ref="price" defaultValue={this.state.productDetail.price} />
+                    </li>
+                    <li>
+                      상품 공급사 : <input type="text" ref="supplier_name" defaultValue={this.state.productDetail.supplier.name}/>
+                    </li>
+                  </ul>
+                  <div className="btn_area">
+                    <input type="button"  className="btn" value="완료" onClick={this.updateProduct}/>
+                    <input type="button" className="btn" value="취소" onClick={this.showUpdateView}/>
+                  </div>
+                </div>
+              </article>
+            </section>
+        </Fragment>
+      );
+    }
   }
 }
 

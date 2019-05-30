@@ -30,6 +30,7 @@ class ProductList extends Component {
         this.getProductList();
     }
     
+    // 상품 공급사 호출
     getSupplierList = async() =>{
         const supplier_list_query = `{
             supplier_list {
@@ -49,7 +50,7 @@ class ProductList extends Component {
             console.log(e);
         }
     }
-
+    // 상품 목록 호출
     getProductList = async() =>{
         const product_list_query = `{
             product_list{
@@ -75,6 +76,7 @@ class ProductList extends Component {
         }
     }
 
+    // 상품 추가
     addProduct = async() =>{
         // selectBox 선택 없을 경우 supplierList의 첫번째 id 값 부여
         const supplier = this.state.selectSupplierId ?this.state.selectSupplierId : this.state.supplierList[0].id;
@@ -124,18 +126,17 @@ class ProductList extends Component {
                             <h2>상품 추가</h2>
                             <div>
                                 <label className="input_label">제조사
-                                <select onChange={this.selectOption}>
+                                <select onChange={this.selectOption} className="text_input">
                                     {this.state.supplierList.map(
                                         (c) => <option value={c.id} key={c.id}>{c.name}</option>
                                     )}
                                 </select></label>
-                                <label className="input_label">이름
-                                <input type="text" name="productName" onChange={this.textChange}/></label>
-                                <label className="input_label">가격
-                                <input type="text" name="productPrice" onChange={this.textChange}/></label>
+                                <label className="input_label">이름 : 
+                                <input type="text" className="text_input" name="productName" onChange={this.textChange}/></label>
+                                <label className="input_label">가격 : 
+                                <input type="text" className="text_input" name="productPrice" onChange={this.textChange}/></label>
                                 <input type="button" className="btn" value="상품 추가" onClick={this.addProduct}/>
                             </div>
-                            
                         </article>
                         <article>
                             {this.state.productList.map(

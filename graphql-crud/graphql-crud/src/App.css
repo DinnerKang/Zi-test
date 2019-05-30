@@ -11,3 +11,12 @@ ul, li{
   height: 30px;
   cursor: pointer;
 }
+.text_input{
+  margin-left: 5px;
+  border: 1px solid #000;
+}
+.select_box{
+  margin-left: 5px;
+  border: 1px solid #000;
+  height: 23px;
+}
