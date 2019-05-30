@@ -5,6 +5,11 @@
     width: 1200px;
     margin: 0 auto;
 }
+.main_area{
+    width: 250px;
+    margin: 0 auto;
+    text-align: center;
+}
 .input_label{
     display: block;
     margin: 10px 0;
@@ -25,4 +30,8 @@
 }
 .product_list{
     margin: 5px 0;
+}
+.supplier_select{
+    height: 25px;
+    width: 120px;
 }

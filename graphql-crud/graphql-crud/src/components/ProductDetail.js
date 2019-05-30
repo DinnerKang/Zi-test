@@ -1,15 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import axios from 'axios';
-
-import './ProductDetaill.css';
-
-const endPoint = axios.create({
-    baseURL : 'http://test.recruit.croquis.com:28500/',
-    headers : {
-        'Content-Type' : 'application/json',
-        'Croquis-UUID' : '00000000-0000-0000-0000-000000000000'
-    }
-});
+import './ProductDetail.css';
+import { endPoint } from '../service/Product';
 
 
 class ProductDetail extends Component {
@@ -30,7 +21,6 @@ class ProductDetail extends Component {
               date_created: '',
               date_updated: '',
             },
-            supplierList: [],
             updateView: false
         }
         
@@ -72,7 +62,6 @@ class ProductDetail extends Component {
             this.setState({
                 productDetail : detailData.data.data.product
             });
-            console.log(detailData);
           }catch(e){
             console.log(e);
           }
@@ -81,9 +70,10 @@ class ProductDetail extends Component {
     // 날짜 포멧 변경
     changeDateFormat = (date) =>{
       if(date){
-        const Year = new Date(date).getFullYear();
-        const Month = new Date(date).getMonth() +1;
-        const Day = new Date(date).getDate();
+        const changeDate = new Date(date);
+        const Year = changeDate.getFullYear();
+        const Month = changeDate.getMonth() +1;
+        const Day = changeDate.getDate();
         return `${Year}년 ${Month}월 ${Day}일`
       }
     }
@@ -120,7 +110,6 @@ class ProductDetail extends Component {
 
     // 상품 업데이트
     updateProduct = async() =>{
-        console.log(this.refs);
         const id = this.state.productDetail.id;
         const name_ko = this.refs.name_ko.value;
         const name_en = this.refs.name_en.value;
@@ -145,34 +134,14 @@ class ProductDetail extends Component {
           alert('수정 완료');
           this.setState({
             updateView : false
-          })
+          });
           this.getProdcutDetail();
         }catch(e){ 
           console.log(e);
         }
 
     }
-
-    // 상품 공급사 호출 -> ToDo : 리팩토링으로 중복 제거 하기
-    getSupplierList = async() =>{
-      const supplier_list_query = `{
-          supplier_list {
-              item_list {
-                  id
-                  name
-              }
-          }
-      }`;
-      try{
-          const supplierList = await endPoint.post('',{query : supplier_list_query});
-          this.setState({
-              supplierList : supplierList.data.data.supplier_list.item_list
-          });
-          console.log(this.state.supplierList);
-      }catch(e){
-          console.log(e);
-      }
-  }
+    
   render() {
     if(!this.state.updateView){
       return(
@@ -210,8 +179,8 @@ class ProductDetail extends Component {
                   </li>
                 </ul>
                 <div className="btn_area">
-                  <input type="button"  className="btn" value="수정" onClick={this.showUpdateView}/>
-                  <input type="button" className="btn" value="삭제" onClick={this.deleteProduct}/>
+                  <input type="button"  className="btn detail_btn" value="수정" onClick={this.showUpdateView}/>
+                  <input type="button" className="btn detail_btn" value="삭제" onClick={this.deleteProduct}/>
                 </div>
               </div>
             </article>
@@ -244,15 +213,12 @@ class ProductDetail extends Component {
                                             defaultValue={this.state.productDetail.description_en ? this.state.productDetail.description_en : '미입력'}/>
                     </li>
                     <li>
-                      상품 가격 : <input type="text" ref="price" defaultValue={this.state.productDetail.price} />
-                    </li>
-                    <li>
-                      상품 공급사 : <input type="text" ref="supplier_name" defaultValue={this.state.productDetail.supplier.name}/>
+                      상품 가격 : <input type="number" ref="price" defaultValue={this.state.productDetail.price} />
                     </li>
                   </ul>
                   <div className="btn_area">
-                    <input type="button"  className="btn" value="완료" onClick={this.updateProduct}/>
-                    <input type="button" className="btn" value="취소" onClick={this.showUpdateView}/>
+                    <input type="button"  className="btn detail_btn" value="완료" onClick={this.updateProduct}/>
+                    <input type="button" className="btn detail_btn" value="취소" onClick={this.showUpdateView}/>
                   </div>
                 </div>
               </article>

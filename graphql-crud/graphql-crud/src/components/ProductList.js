@@ -1,16 +1,7 @@
 import React, { Component, Fragment } from 'react';
-import axios from 'axios';
-
 import './ProductList.css';
 
-const endPoint = axios.create({
-    baseURL : 'http://test.recruit.croquis.com:28500/',
-    headers : {
-        'Content-Type' : 'application/json',
-        'Croquis-UUID' : '00000000-0000-0000-0000-000000000000'
-    }
-});
-
+import { endPoint } from '../service/Product';
 
 class ProductList extends Component {
 
@@ -45,7 +36,6 @@ class ProductList extends Component {
             this.setState({
                 supplierList : supplierList.data.data.supplier_list.item_list
             });
-            console.log(this.state.supplierList);
         }catch(e){
             console.log(e);
         }
@@ -70,7 +60,6 @@ class ProductList extends Component {
             this.setState({
                 productList : productList.data.data.product_list.item_list
             });
-            console.log(this.state.productList);
         }catch(e){
             console.log(e);
         }
@@ -117,24 +106,23 @@ class ProductList extends Component {
         this.props.history.push('/ProductDetail');
     }
     render() {
-        
         return (
             <Fragment>
                 <section>
                     <div className="main_container">
-                        <article>
+                        <article className="main_area">
                             <h2>상품 추가</h2>
-                            <div>
-                                <label className="input_label">제조사
-                                <select onChange={this.selectOption} className="text_input">
+                            <div className="option_area">
+                                <select onChange={this.selectOption} className="supplier_select">
                                     {this.state.supplierList.map(
                                         (c) => <option value={c.id} key={c.id}>{c.name}</option>
                                     )}
-                                </select></label>
+                                </select>
                                 <label className="input_label">이름 : 
                                 <input type="text" className="text_input" name="productName" onChange={this.textChange}/></label>
                                 <label className="input_label">가격 : 
-                                <input type="text" className="text_input" name="productPrice" onChange={this.textChange}/></label>
+                                <input type="number" className="text_input" name="productPrice" onChange={this.textChange}
+                                       /></label>
                                 <input type="button" className="btn" value="상품 추가" onClick={this.addProduct}/>
                             </div>
                         </article>

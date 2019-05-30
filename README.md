@@ -3,8 +3,11 @@
 
 ## alter-date-format
 
+1. alter-date-format.html
+
 ## flatten-tree
 
+1. flatten-tree.html
 
 ## graphql-crud
 
