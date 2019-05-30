@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from 'react';
 import axios from 'axios';
 
+import './ProductDetaill.css';
+
 const endPoint = axios.create({
     baseURL : 'http://test.recruit.croquis.com:28500/',
     headers : {
@@ -39,32 +41,42 @@ class ProductDetail extends Component {
         }
         this.getProdcutDetail();
     }
-    getProdcutDetail = async() =>{
-        const id = 26;
 
-        const product_query = `query($id:ID!){
-            product(id: $id){
-              id
-              name_ko
-              name_en
-              description_ko
-              description_en
-              price
-              supplier{
-                name
+    // 상품 상세 목록 호출
+    getProdcutDetail = async() =>{
+        const id = this.props.productId;
+        const product_query = `
+          query($id:ID!){
+              product(id: $id){
+                id
+                name_ko
+                name_en
+                description_ko
+                description_en
+                price
+                supplier{
+                  name
+                }
+                date_created
+                date_updated
               }
-              date_created
-              date_updated
-            }
-          }`;
-        const detailData = await endPoint.post('',{
-            query : product_query,
-            variables : { id }
-        });
-        this.setState({
-            productDetail : detailData.data.data.product
-        });
+            }`;
+
+          try{
+            const detailData = await endPoint.post('',{
+              query : product_query,
+              variables : { id }
+            });
+            this.setState({
+                productDetail : detailData.data.data.product
+            });
+            console.log(detailData);
+          }catch(e){
+            console.log(e);
+          }
     }
+
+    // 날짜 포멧 변경
     changeDateFormat = (date) =>{
       if(date){
         const Year = new Date(date).getFullYear();
@@ -74,12 +86,38 @@ class ProductDetail extends Component {
         return `${Year}년 ${Month}월 ${Day}일 ${Hour}시`
       }
     }
+
+    // 상품 삭제
+    deleteProduct = async() =>{
+      const id = this.state.productDetail.id;
+      const deleteProduct_query =`
+        mutation($id:ID!){
+          deleteProduct(input:{id:$id}){
+            id
+            name_ko
+          }
+        }
+      `;
+      try{
+        await endPoint.post('',{
+          query : deleteProduct_query,
+          variables : { id }
+        });
+        alert('삭제 완료');
+        this.props.history.push('/');
+      }catch(e){
+        console.log(e);
+        alert('삭제 실패');
+      }
+      
+    }
+
   render() {
     return (
       <Fragment>
           <section>
-            <article>
-              <div>
+            <article  className="detail_container">
+              <div  className="detail_area">
                 <ul>
                   <li>
                     상품 ID : {this.state.productDetail.id}
@@ -109,6 +147,10 @@ class ProductDetail extends Component {
                     상품 최종 수정일 : {this.changeDateFormat(this.state.productDetail.date_updated)}
                   </li>
                 </ul>
+                <div className="btn_area">
+                  <input type="button"  className="btn" value="수정" />
+                  <input type="button" className="btn" value="삭제" onClick={this.deleteProduct}/>
+                </div>
               </div>
             </article>
           </section>

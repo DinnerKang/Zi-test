@@ -133,7 +133,7 @@ class ProductList extends Component {
                                 <input type="text" name="productName" onChange={this.textChange}/></label>
                                 <label className="input_label">가격
                                 <input type="text" name="productPrice" onChange={this.textChange}/></label>
-                                <input type="button" value="상품 추가" onClick={this.addProduct}/>
+                                <input type="button" className="btn" value="상품 추가" onClick={this.addProduct}/>
                             </div>
                             
                         </article>
