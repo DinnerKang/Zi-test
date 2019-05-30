@@ -149,7 +149,7 @@ class ProductList extends Component {
                                                 상품 이름(한) : {c.name_ko}
                                             </li>
                                             <li className="product_list">
-                                                상품 이름(영) : {c.name_en}
+                                                상품 이름(영) : {c.name_en ? c.name_en : '미입력'}
                                             </li>
                                             <li className="product_list">
                                                 상품 가격 : {c.price}
