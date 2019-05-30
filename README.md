@@ -1,13 +1,14 @@
 # Zi-test
 
-
 ## alter-date-format
 
 1. alter-date-format.html
+2. alter-date-format.js
 
 ## flatten-tree
 
 1. flatten-tree.html
+2. flatten-tree.js
 
 ## graphql-crud
 
