@@ -66,7 +66,7 @@ class ProductList extends Component {
     }
 
     // 상품 추가
-    addProduct = async() =>{
+    createProduct = async() =>{
         // selectBox 선택 없을 경우 supplierList의 첫번째 id 값 부여
         const supplier = this.state.selectSupplierId ?this.state.selectSupplierId : this.state.supplierList[0].id;
         const name = this.state.productName;
@@ -101,7 +101,7 @@ class ProductList extends Component {
             selectSupplierId : e.target.value
         })
     }
-    productDetail = (id) =>{
+    showProductDetail = (id) =>{
         this.props.passId(id);
         this.props.history.push('/ProductDetail');
     }
@@ -123,13 +123,13 @@ class ProductList extends Component {
                                 <label className="input_label">가격 : 
                                 <input type="number" className="text_input" name="productPrice" onChange={this.textChange}
                                        /></label>
-                                <input type="button" className="btn" value="상품 추가" onClick={this.addProduct}/>
+                                <input type="button" className="btn" value="상품 추가" onClick={this.createProduct}/>
                             </div>
                         </article>
                         <article>
                             {this.state.productList.map(
                                 (c) =>
-                                    <div key={c.id} className="product_list_container" onClick={this.productDetail.bind(this, c.id)}>
+                                    <div key={c.id} className="product_list_container" onClick={this.showProductDetail.bind(this, c.id)}>
                                         <ul >
                                             <li className="product_list">
                                                 상품 ID : {c.id}
